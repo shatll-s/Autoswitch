@@ -61,3 +61,5 @@ for (( i=0; i < ${#benchmark[@]}; i++ )); do
 	algo=$benchmark[$i]
 	echo $nh_algos | jq ".$algo"
 done
+echo $nh_algos | jq ".$CuckooCycle"
+
