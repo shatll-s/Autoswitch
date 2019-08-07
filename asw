@@ -1,10 +1,10 @@
 #!/bin/bash
-benchmark="
+benchmark='
 {
 	"DaggerHashimoto": 10000,
 	"x16r": 115,
 	"Beam": 155
-}"
+}'
 
 nh_algos='
 {
