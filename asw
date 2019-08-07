@@ -1,2 +1,8 @@
 #!/bin/bash
+benchmark="{
+	'DaggerHashimoto': 10000,
+	'x16r': 115,
+	'Beam': 155
+}"
 echo "$(date -R) Autoswitch for NiceHash started"
+echo $benchmark | jq '.'
