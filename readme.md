@@ -1,0 +1,2 @@
+Autoswitch for Nicehash
+≈
