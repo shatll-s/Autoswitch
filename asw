@@ -61,7 +61,7 @@ benchmark_algos=(`echo $benchmark | jq -r 'keys | .[]'`)
 
 for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	algos[$i]=${benchmark_algos[$i]}
-	keys[$i]=`echo $nh_algos | jq ".$algo"`
+	keys[$i]=`echo $nh_algos | jq ".${algos[$i]}"`
 	echo "Algo: ${algos[$i]}, key ${keys[$i]}"
 done
 
