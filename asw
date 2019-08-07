@@ -57,7 +57,7 @@ nh_algos='
 echo "$(date -R) Autoswitch for NiceHash started"
 echo $benchmark | jq "."
 echo $nh_algos | jq "."
-benchmark_algos=`echo $benchmark | jq 'keys'`
+benchmark_algos=((`echo $benchmark | jq -r 'keys'`))
 echo ${benchmark_algos[@]}
 for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	algo=$benchmark_algos[$i]
