@@ -80,6 +80,6 @@ for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
 	price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 	profit_btc[$i]=`echo "scale=2; x=${price[$i]} * ${hr[$i]}; if(x<1) print 0; x" | bc -l`
-	profit_usd[$i]=`echo "scale=2; ${profit_btc[$i]} * $btcusd"`
+	profit_usd[$i]=`echo "scale=2; ${profit_btc[$i]} * $btcusd" | bc -l`
 	echo "Algo: ${algo[$i]} (${key[$i]}), hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${profit_usd[$i]} USD/day,"
 done
