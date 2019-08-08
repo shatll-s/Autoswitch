@@ -1,7 +1,7 @@
 #!/bin/bash
 benchmark='
 {
-	"DaggerHashimoto": 10000,
+	"DaggerHashimoto": 0.162,
 	"X16R": 115,
 	"Beam": 155
 }'
@@ -66,5 +66,6 @@ for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	algo[$i]=${benchmark_algos[$i]}
 	key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
 	price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .price"`
-	echo "Algo: ${algo[$i]}, key ${key[$i]}, price ${price[$i]} "
+	profit[$i]=`echo "scale=2; ${price[$i]} * ${benchmark[$i]}"`
+	echo "Algo: ${algo[$i]}, key ${key[$i]}, price ${price[$i]}, profit ${profit[$i]}"
 done
