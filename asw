@@ -65,3 +65,5 @@ for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	echo "Algo: ${algos[$i]}, key ${keys[$i]}"
 done
 
+nh_stats=`curl -s https://api.nicehash.com/api?method=stats.global.current`
+echo $nh_stats | jq '.'
