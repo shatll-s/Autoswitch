@@ -4,9 +4,14 @@ api="https://api.nicehash.com/api?method=simplemultialgo.info"
 benchmark='
 {
 	"DaggerHashimoto": 0.162,
-	"X16R": 115,
-	"Beam": 155
+	"X16R": 0.115,
+	"Beam": 0.155
 }'
+
+#DaggerHashimoto	BTC/TH/день
+#X16R				BTC/GH/день
+#Beam				BTC/kSol/день
+#GrinCuckaroo29		BTC/kG/день
 
 nh_algos='
 {
