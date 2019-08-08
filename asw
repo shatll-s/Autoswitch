@@ -5,7 +5,7 @@ benchmark='
 {
 	"DaggerHashimoto": 0.162,
 	"X16R": 0.115,
-	"Beam": 0.000155
+	"Beam": 0.155
 }'
 
 #DaggerHashimoto	BTC/TH/день
