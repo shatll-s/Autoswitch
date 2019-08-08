@@ -62,7 +62,12 @@ nh_algos='
 }'
 
 echo "$(date -R) Autoswitch for NiceHash started"
-echo $benchmark | jq "."
+
+bitaps_api=`curl -s https://api.bitaps.com/market/v1/ticker/btcusd`
+btcusd=`echo $bitaps_api | jq '.data.last'`
+[[ -z $btcusd ]] && echo "BitAPS API is not available, using default BTC price " && btcusd=12000
+echo "BTC/USD $btcusd"
+#echo $benchmark | jq "."
 #echo $nh_algos | jq "."
 benchmark_algos=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
