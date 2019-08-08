@@ -4,7 +4,7 @@ api="https://api.nicehash.com/api?method=simplemultialgo.info"
 benchmark='
 {
 	"DaggerHashimoto": 0.162,
-	"X16R": 115,
+	"X16R": 0.000115,
 	"Beam": 0.000155
 }'
 
