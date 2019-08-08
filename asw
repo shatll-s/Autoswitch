@@ -65,6 +65,6 @@ echo $nh_stats | jq '.result.stats[]'
 for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	algos[$i]=${benchmark_algos[$i]}
 	keys[$i]=`echo $nh_algos | jq ".${algos[$i]}"`
-	price[$i]=`echo $a | jq ".[] | select (.algo == ${algos[$i]})"`
+	price[$i]=`echo $a | jq ". | select (.algo == ${keys[$i]})"`
 	echo "Algo: ${algos[$i]}, key ${keys[$i]}, price ${price[$i]} "
 done
