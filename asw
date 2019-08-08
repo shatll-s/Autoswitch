@@ -1,4 +1,17 @@
 #!/bin/bash
+#colors section (somebody can use it without SobakaOS)
+RED="\e[31m"
+WHITE="\e[0m"
+GREEN="\e[32m"
+BROWN="\e[33m"
+BLUE="\e[34m"
+PURPLE="\e[35m"
+CYAN="\e[36m"
+LINE="echo -e $BROWN================================================================$WHITE"
+up="↗"
+down="↘"
+#colors section end
+
 api="https://api.nicehash.com/api?method=simplemultialgo.info"
 
 benchmark='
@@ -81,5 +94,5 @@ for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 	profit_btc[$i]=`echo "scale=2; x=${price[$i]} * ${hr[$i]}; if(x<1) print 0; x" | bc -l`
 	profit_usd[$i]=`echo "scale=2; ${profit_btc[$i]} * $btcusd" | bc -l`
-	echo "Algo: ${algo[$i]} (${key[$i]}), hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${profit_usd[$i]} USD/day,"
+	string="${CYAN}${algo[$i]}${WHITE} (${key[$i]}), price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
 done
