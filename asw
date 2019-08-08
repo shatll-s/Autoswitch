@@ -66,6 +66,8 @@ for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	algo[$i]=${benchmark_algos[$i]}
 	key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
 	price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .price"`
+	echo "scale=2; ${price[$i]} * ${benchmark[$i]}"
 	profit[$i]=`echo "scale=2; ${price[$i]} * ${benchmark[$i]}" | bc -l`
+	#sum_cpu_tf=`echo "scale=0; $sum_cpu_temp + ${cpu_temp[$i]}" | bc -l`
 	echo "Algo: ${algo[$i]}, key ${key[$i]}, price ${price[$i]}, profit ${profit[$i]}"
 done
