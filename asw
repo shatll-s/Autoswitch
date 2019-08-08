@@ -59,7 +59,7 @@ echo $benchmark | jq "."
 #echo $nh_algos | jq "."
 benchmark_algos=(`echo $benchmark | jq -r 'keys | .[]'`)
 
-nh_stats=echo `curl -s https://api.nicehash.com/api?method=stats.global.current` | jq '.result.stats[]'
+nh_stats=$(echo `curl -s https://api.nicehash.com/api?method=stats.global.current` | jq '.result.stats[]')
 echo $nh_stats > /tmp/nh_stats
 
 for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
