@@ -57,7 +57,7 @@ nh_algos='
 echo "$(date -R) Autoswitch for NiceHash started"
 echo $benchmark | jq "."
 #echo $nh_algos | jq "."
-benchmark_algos=(`echo $benchmark | jq -r 'keys | .[]'`)
+benchmark_algos=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
 
 
@@ -70,5 +70,5 @@ for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .price"`
 	profit[$i]=`echo "scale=2; x=${price[$i]} * ${hr[$i]}; if(x<1) print 0; x" | bc -l`
 	
-	echo "Algo: ${algo[$i]}, (${key[$i]}), hr ${hr[$i]}, price ${price[$i]}, profit ${profit[$i]}"
+	echo "Algo: ${algo[$i]} (${key[$i]}), hr ${hr[$i]}, price ${price[$i]}, profit ${profit[$i]}"
 done
