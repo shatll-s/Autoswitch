@@ -1,4 +1,6 @@
 #!/bin/bash
+api="https://api.nicehash.com/api?method=simplemultialgo.info"
+
 benchmark='
 {
 	"DaggerHashimoto": 0.162,
@@ -61,13 +63,13 @@ benchmark_algos=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
 
 
-nh_stats=$(echo `curl -s https://api.nicehash.com/api?method=stats.global.current` | jq '.result.stats[]')
+nh_stats=$(echo `curl -s $spi` | jq '.result.stats[]')
 echo $nh_stats > /tmp/nh_stats
 
 for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	algo[$i]=${benchmark_algos[$i]}
 	key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-	price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .price"`
+	price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 	profit[$i]=`echo "scale=2; x=${price[$i]} * ${hr[$i]}; if(x<1) print 0; x" | bc -l`
 	
 	echo "Algo: ${algo[$i]} (${key[$i]}), hr ${hr[$i]}, price ${price[$i]}, profit ${profit[$i]}"
