@@ -83,7 +83,7 @@ btcusd=`echo $bitaps_api | jq '.data.last'`
 echo "BTC/USD $btcusd"
 #echo $benchmark | jq "."
 #echo $nh_algos | jq "."
-algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
+algo=(`echo $benchmark | jq 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
 
 nh_stats=$(echo `curl -s $api` | jq '.miningAlgorithms[]')
