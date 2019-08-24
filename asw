@@ -18,8 +18,8 @@ api="https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
 benchmark='
 {
 	"DAGGERHASHIMOTO": 0.162,
-	"X16R": 115,
-	"BEAMV2": 0.000000155
+	"X16R": 0.115,
+	"BEAMV2": 0.000155
 }'
 
 #DaggerHashimoto	BTC/TH/день
