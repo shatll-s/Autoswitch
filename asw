@@ -12,20 +12,27 @@ up="↗"
 down="↘"
 #colors section end
 
-api="https://api.nicehash.com/api?method=simplemultialgo.info"
+#api="https://api.nicehash.com/api?method=simplemultialgo.info"
 api="https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
 
 benchmark='
 {
 	"DAGGERHASHIMOTO": 0.162,
 	"X16R": 0.115,
-	"BEAMV2": 0.000155
+	"BEAMV2": 0.000000155
 }'
 
-#DaggerHashimoto	BTC/TH/день
-#X16R				BTC/GH/день
-#Beam				BTC/kSol/день
-#GrinCuckaroo29		BTC/kG/день
+algo_dividers='
+{
+	"DAGGERHASHIMOTO": 1000,
+	"X16R": 1000,
+	"BEAMV2": 1000000
+}'
+
+#DAGGERHASHIMOTO	BTC/TH/day
+#X16R				BTC/GH/day
+#BEAMV2				BTC/kSol/day
+#GrinCuckaroo29		BTC/kG/day
 
 nh_algos='
 {
@@ -92,6 +99,8 @@ echo $nh_stats > /tmp/nh_stats
 for (( i=0; i < ${#algo[@]}; i++ )); do
 	#algo[$i]=${benchmark_algos[$i]}
 	#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
+	divider[$i]=`echo $algo_dividers | jq ".${algo[$i]}"`
+	echo "Divider: "${divider[$i]}
 	price[$i]=`echo $nh_stats | jq -r ". | select (.algorithm == \"${algo[$i]}\") | .paying"`
 	profit_btc[$i]=`echo "scale=2; x=${price[$i]} * ${hr[$i]}; if(x<1) print 0; x" | bc -l`
 	profit_usd[$i]=`echo "scale=2; x=${profit_btc[$i]} * $btcusd; if(x<1) print 0; x" | bc -l`
