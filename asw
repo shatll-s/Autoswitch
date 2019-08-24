@@ -86,7 +86,7 @@ echo "BTC/USD $btcusd"
 algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
 
-nh_stats=$(echo `curl -s $api` | jq '.result.simplemultialgo[]')
+nh_stats=$(echo `curl -s $api` | jq '.miningAlgorithms[]')
 echo $nh_stats > /tmp/nh_stats
 
 for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
