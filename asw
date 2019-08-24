@@ -92,7 +92,7 @@ echo $nh_stats > /tmp/nh_stats
 for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 	#algo[$i]=${benchmark_algos[$i]}
 	#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-	price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${algo[$i]}) | .paying"`
+	price[$i]=`echo $nh_stats | jq -r ". | select (.algorithm == ${algo[$i]}) | .paying"`
 	profit_btc[$i]=`echo "scale=2; x=${price[$i]} * ${hr[$i]}; if(x<1) print 0; x" | bc -l`
 	profit_usd[$i]=`echo "scale=2; ${profit_btc[$i]} * $btcusd" | bc -l`
 	string="${CYAN}${algo[$i]}${WHITE}, price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
