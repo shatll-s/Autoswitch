@@ -88,10 +88,9 @@ function get_old_nicehash_stats () {
 		"CUCKOOCYCLE" : 43
 	}'
 	nh_stats=$(echo `curl -s $api` | jq '.result.simplemultialgo[]')
-	echo $nh_stats | jq '.'
 	for (( i=0; i < ${#algo[@]}; i++ )); do
 		key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-		price[$i]=`echo $nh_stats | jq -r ". | select (.algo == \"${key[$i]}\") | .paying"`
+		price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 		#algo[$i]=${benchmark_algos[$i]}
 		#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
 		#price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${algo[$i]}) | .paying"`
