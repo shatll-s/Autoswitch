@@ -146,4 +146,6 @@ if [[ ! -z max_profit_i ]]; then
 	#elif 
 		:
 	fi
+else
+	echo "lalal"
 fi
