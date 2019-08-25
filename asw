@@ -1,20 +1,9 @@
 #!/bin/bash
-#colors section (somebody can use it without SobakaOS)
-RED="\e[31m"
-WHITE="\e[0m"
-GREEN="\e[32m"
-BROWN="\e[33m"
-BLUE="\e[34m"
-PURPLE="\e[35m"
-CYAN="\e[36m"
-LINE="echo -e $BROWN================================================================$WHITE"
-up="↗"
-down="↘"
-#colors section end
+. colors
 
-#api="https://api.nicehash.com/api?method=simplemultialgo.info"
-api="https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
+provider="nicehash_new"
 
+#benchmark позже заливать из файла
 benchmark='
 {
 	"DAGGERHASHIMOTO": 162,
@@ -22,6 +11,10 @@ benchmark='
 	"BEAMV2": 155
 }'
 
+#DAGGERHASHIMOTO	BTC/TH/day
+#X16R				BTC/GH/day
+#BEAMV2				BTC/kSol/day
+#GrinCuckaroo29		BTC/kG/day
 algo_dividers='
 {
 	"DAGGERHASHIMOTO": 1000,
@@ -29,10 +22,23 @@ algo_dividers='
 	"BEAMV2": 1000000000
 }'
 
-#DAGGERHASHIMOTO	BTC/TH/day
-#X16R				BTC/GH/day
-#BEAMV2				BTC/kSol/day
-#GrinCuckaroo29		BTC/kG/day
+function get_new_nicehash_stats () {
+	api="https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
+	nh_stats=$(echo `curl -s $api` | jq '.miningAlgorithms[]')
+	for (( i=0; i < ${#algo[@]}; i++ )); do
+		#algo[$i]=${benchmark_algos[$i]}
+		#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
+		divider[$i]=`echo $algo_dividers | jq ".${algo[$i]}"`
+		echo "Divider: "${divider[$i]}
+		price[$i]=`echo $nh_stats | jq -r ". | select (.algorithm == \"${algo[$i]}\") | .paying"`
+		profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
+		profit_usd[$i]=`echo "scale=2; x=${profit_btc[$i]} * $btcusd; if(x<1) print 0; x" | bc -l`
+		string="${CYAN}${algo[$i]}${WHITE}, price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
+		echo -e "$string"
+	done	
+}
+
+#api="https://api.nicehash.com/api?method=simplemultialgo.info"
 
 nh_algos='
 {
@@ -82,28 +88,24 @@ nh_algos='
 	"CuckooCycle" : 43
 }'
 
-echo "$(date -R) Autoswitch for NiceHash started"
+algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
+hr=(`echo $benchmark | jq -r '.[]'`)
 
+echo "$(date -R) Autoswitch for NiceHash started"
+echo -e "State provider: ${CYAN}$provider${WHITE}"
 bitaps_api=`curl -s https://api.bitaps.com/market/v1/ticker/btcusd`
 btcusd=`echo $bitaps_api | jq '.data.last'`
 [[ -z $btcusd ]] && echo "BitAPS API is not available, using default BTC price " && btcusd=12000
 echo "BTC/USD $btcusd"
-#echo $benchmark | jq "."
-#echo $nh_algos | jq "."
-algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
-hr=(`echo $benchmark | jq -r '.[]'`)
 
-nh_stats=$(echo `curl -s $api` | jq '.miningAlgorithms[]')
-echo $nh_stats > /tmp/nh_stats
+#echo $nh_stats > /tmp/nh_stats
 
-for (( i=0; i < ${#algo[@]}; i++ )); do
-	#algo[$i]=${benchmark_algos[$i]}
-	#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-	divider[$i]=`echo $algo_dividers | jq ".${algo[$i]}"`
-	echo "Divider: "${divider[$i]}
-	price[$i]=`echo $nh_stats | jq -r ". | select (.algorithm == \"${algo[$i]}\") | .paying"`
-	profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
-	profit_usd[$i]=`echo "scale=2; x=${profit_btc[$i]} * $btcusd; if(x<1) print 0; x" | bc -l`
-	string="${CYAN}${algo[$i]}${WHITE}, price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
-	echo -e "$string"
-done
+case $provider in
+	nicehash_old)
+		screen -d wd
+		screen -r wd
+	;;
+	nicehash_new|*)
+		get_new_nicehash_stats
+	;;
+esac
