@@ -94,16 +94,13 @@ function get_old_nicehash_stats () {
 		price[$i]=`echo $nh_stats | jq -r ". | select (.algo == \"${key[$i]}\") | .paying"`
 		#algo[$i]=${benchmark_algos[$i]}
 		#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-		price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${algo[$i]}) | .paying"`
+		#price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${algo[$i]}) | .paying"`
 		profit_btc[$i]=`echo "scale=2; x=${price[$i]} * ${hr[$i]}; if(x<1) print 0; x" | bc -l`
 		profit_usd[$i]=`echo "scale=2; ${profit_btc[$i]} * $btcusd" | bc -l`
 		string="${CYAN}${algo[$i]}${WHITE} (${key[$i]}), price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
 		echo -e "$string"
 	done 
 }
-
-
-
 
 algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
