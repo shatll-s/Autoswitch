@@ -155,6 +155,12 @@ if [[ ! -z $max_profit_i ]]; then
 		echo "active profit = $active_profit"
 		delta=`echo "scale=2;($max_profit/$active_profit - 1)*100" | bc -l`
 		echo "delta - $delta%"
+		echo -en "${CYAN}${algo[$max_profit_i]}${GREEN} is $delta% more profitable then ${CYAN}$active_algo${GREEN}. "
+		if [[ $delta - ge $hyst ]]; then
+			echo -e "Switching to it${WHITE}"
+		else
+			echo -e "Nothing to do${WHITE}"
+		fi
 	fi
 else
 	echo "Error occured while getting max profit"
