@@ -149,7 +149,7 @@ if [[ ! -z $max_profit_i ]]; then
 		echo -e "${CYAN}${active_algo} ${GREEN}is already set. Nothing to do${WHITE}"
 	else	
 		for (( i=0; i < ${#algo[@]}; i++ )); do
-			[[ ${algo[$i]} == $active_algo ]] && active_profit=$profit_btc[$i] && break
+			[[ ${algo[$i]} == $active_algo ]] && active_profit=${profit_btc[$i]} && break
 		done
 		echo "active profit = $active_profit"
 	fi
