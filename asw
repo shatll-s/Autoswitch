@@ -118,10 +118,10 @@ echo "BTC/USD $btcusd"
 #echo $nh_stats > /tmp/nh_stats
 
 case $provider in
-	Nicehash OLD)
+	"Nicehash OLD")
 		get_old_nicehash_stats
 	;;
-	Nicehash NEW|*)
+	"Nicehash NEW"|*)
 		get_new_nicehash_stats
 	;;
 esac
