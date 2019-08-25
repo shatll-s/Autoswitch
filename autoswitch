@@ -13,7 +13,6 @@
 		{
 			"algo": "BEAMV2",
 			"miner": "gminer",
-			"active": 1,
 			"batch": "cd /sobaka/miners/gminer/1.59/; export GPU_MAX_ALLOC_PERCENT=100; export GPU_SINGLE_ALLOC_PERCENT=100; /sobaka/miners/gminer/1.59/miner --algo beamhashII --server beamv2.eu-new.nicehash.com --port 3378 --user 3BAeuZjNMmobioMMpMyXNVHMmZQ5q1voDb.Worker4 --pass x --api 10050"
 		}
 	]
