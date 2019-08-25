@@ -136,7 +136,7 @@ if [[ ! -z max_profit_i ]]; then
 	. $BATCH_CFG
 	as_cfg=`cat $AUTOSWITCH_CFG`
 	echo $as_cfg | jq '.'
-	selected=`echo $as_cfg | jq ". | select (.[].selected == 1) | .[]"`
+	selected=as_cfg=`cat autoswitch`; echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"
 	echo "Selected"
 	echo $selected | jq '.'
 fi
