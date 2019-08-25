@@ -87,6 +87,8 @@ function get_old_nicehash_stats () {
 		"CryptoNightR" : 42,
 		"CuckooCycle" : 43
 	}'
+	nh_stats=$(echo `curl -s $api` | jq '.result.simplemultialgo[]')
+	
 	for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
 		key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
 		price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
