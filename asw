@@ -1,7 +1,7 @@
 #!/bin/bash
 BATCH_CFG="/sobaka/cfg/batch.cfg"
 #AUTOSWITCH_CFG="/sobaka/cfg/autoswitch.cfg"
-AUTOSWITCH_CFG="autoswitch"
+AUTOSWITCH_CFG="/Autoswitch/autoswitch"
 . colors
 
 provider="Nicehash NEW"
