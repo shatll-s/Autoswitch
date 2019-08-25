@@ -34,10 +34,10 @@ function get_new_nicehash_stats () {
 		divider[i]=`echo $algo_dividers | jq ".${algo[$i]}"`
 		price[$i]=`echo $nh_stats | jq -r ". | select (.algorithm == \"${algo[$i]}\") | .paying"`
 		profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
-		if [[ -z $max_profit || `echo "if (profit_btc[$i] > $max_profit) print 1" | bc -l` -eq 1 ]]; then
-				max_profit=${profit_btc[$i]}
-				max_profit_i=$i
-			fi
+		if [[ -z $max_profit || `echo "if (${profit_btc[$i]} > $max_profit) print 1" | bc -l` -eq 1 ]]; then
+			max_profit=${profit_btc[$i]}
+			max_profit_i=$i
+		fi
 		profit_usd[$i]=`echo "scale=2; x=${profit_btc[$i]} * $btcusd / 1; if(x<1) print 0; x" | bc -l`
 		string="${CYAN}${algo[$i]}${WHITE}, price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
 		echo -e "$string"
@@ -100,7 +100,7 @@ function get_old_nicehash_stats () {
 			divider[i]=`echo $algo_dividers | jq ".${algo[$i]}"`
 			price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 			profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
-			if [[ -z $max_profit || `echo "if (profit_btc[$i] > $max_profit) print 1" | bc -l` -eq 1 ]]; then
+			if [[ -z $max_profit || `echo "if (${profit_btc[$i]} > $max_profit) print 1" | bc -l` -eq 1 ]]; then
 				max_profit=${profit_btc[$i]}
 				max_profit_i=$i
 			fi
@@ -151,5 +151,5 @@ if [[ ! -z $max_profit_i ]]; then
 		:
 	fi
 else
-	echo "lalal"
+	echo "Error occured while getting max profit"
 fi
