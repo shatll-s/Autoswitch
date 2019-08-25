@@ -91,6 +91,7 @@ function get_old_nicehash_stats () {
 			key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
 			price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 			profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
+			echo `echo "if (profit_btc[$i] > $max_profit) print 1" | bc -l`
 			if [[ -z $max_profit || `echo "if (profit_btc[$i] > $max_profit) print 1" | bc -l` -eq 1 ]]; then
 				max_profit=${profit_btc[$i]}
 				max_profit_i=$i
