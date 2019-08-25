@@ -27,9 +27,6 @@ function get_new_nicehash_stats () {
 	local api="https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
 	nh_stats=$(echo `curl -s $api` | jq '.miningAlgorithms[]')
 	for (( i=0; i < ${#algo[@]}; i++ )); do
-		#algo[$i]=${benchmark_algos[$i]}
-		#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-		divider[$i]=`echo $algo_dividers | jq ".${algo[$i]}"`
 		price[$i]=`echo $nh_stats | jq -r ". | select (.algorithm == \"${algo[$i]}\") | .paying"`
 		profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
 		profit_usd[$i]=`echo "scale=2; x=${profit_btc[$i]} * $btcusd; if(x<1) print 0; x" | bc -l`
@@ -91,17 +88,13 @@ function get_old_nicehash_stats () {
 	for (( i=0; i < ${#algo[@]}; i++ )); do
 		if [[ `echo $nh_algos | jq ".${algo[$i]}"` != null ]]; then
 			key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-		#if [[ ! -z $key[$i] && $key[$i] != null ]]; then
 			price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
-			#algo[$i]=${benchmark_algos[$i]}
-			#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-			#price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${algo[$i]}) | .paying"`
 			profit_btc[$i]=`echo "scale=2; x=${price[$i]} * ${hr[$i]}; if(x<1) print 0; x" | bc -l`
 			if [[ -z $max_profit || profit_usd[$i] -gt $max_profit ]]; then
-				max_profit=$profit_usd[$i]
+				max_profit=${profit_usd[$i]}
 				max_profit_i=$i
 			fi
-			profit_usd[$i]=`echo "scale=2; ${profit_btc[$i]} * $btcusd" | bc -l`
+			profit_usd[$i]=`echo "scale=2; ${profit_btc[$i]} * $btcusd / ${divider[$i]}" | bc -l`
 			string="${CYAN}${algo[$i]}${WHITE} (${key[$i]}), price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
 		else
 			string="${CYAN}${algo[$i]}${WHITE} is not supported by current state provider"
@@ -112,6 +105,7 @@ function get_old_nicehash_stats () {
 
 algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
+divider=(`echo $algo_dividers | jq ".${algo[$i]}"`)
 
 echo "$(date -R) Autoswitch for NiceHash started"
 echo -e "State provider: ${CYAN}$provider${WHITE}"
@@ -130,9 +124,7 @@ case $provider in
 		get_new_nicehash_stats
 	;;
 esac
-[[ ! -z max_profit_i ]]; then
+if [[ ! -z max_profit_i ]]; then
 	string="${CYAN}${algo[$max_profit_i]}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
 	echo -e "$string"
 fi
-
-
