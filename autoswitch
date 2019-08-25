@@ -1,15 +1,15 @@
-{
-	"DAGGERHASHIMOTO": {
+[
+	{
 		"miner": "claymore",
 		"batch": "cd /sobaka/miners/claymore/14.7/; export GPU_MAX_HEAP_SIZE=100; export GPU_MAX_ALLOC_PERCENT=100; export GPU_USE_SYNC_OBJECTS=1; /sobaka/miners/claymore/14.7/miner -epool daggerhashimoto.eu-new.nicehash.com:3353 -ewal 3BAeuZjNMmobioMMpMyXNVHMmZQ5q1voDb.Worker4 -epsw x -r 1 -mport -3333 -logfile /sobaka/log/claymore_noappend.log -allpools 1 -esm 3"
 	},
-	"X16R": {
+	{
 		"miner": "t_rex",
 		"batch": "cd /sobaka/miners/t_rex/0.13.2/; /sobaka/miners/t_rex/0.13.2/miner -c config"
 	},
-	"BEAMV2": {
+	{
 		"active": 1,
 		"miner": "gminer",
 		"batch": "cd /sobaka/miners/gminer/1.59/; export GPU_MAX_ALLOC_PERCENT=100; export GPU_SINGLE_ALLOC_PERCENT=100; /sobaka/miners/gminer/1.59/miner --algo beamhashII --server beamv2.eu-new.nicehash.com --port 3378 --user 3BAeuZjNMmobioMMpMyXNVHMmZQ5q1voDb.Worker4 --pass x --api 10050"
 	}
-}
+]
