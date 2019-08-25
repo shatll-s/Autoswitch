@@ -133,8 +133,7 @@ case $provider in
 		get_new_nicehash_stats
 	;;
 esac
-$LINE
-echo "@"$max_profit_i"@"
+echo "--"
 if [[ ! -z $max_profit_i ]]; then
 	string="${CYAN}${algo[$max_profit_i]}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
 	echo -e "$string"
@@ -144,11 +143,11 @@ if [[ ! -z $max_profit_i ]]; then
 	active=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
 	active_algo=`echo $active | jq -r '.algo'`
 	
-	if [[ -z $selected ]]; then
+	if [[ -z $active_algo ]]; then
 		echo -e "${GREEN}There is no active algo, set ${CYAN}${algo[$max_profit_i]}${WHITE}"	
 		
-	#elif 
-		:
+	elif [[ $active_algo == ${algo[$max_profit_i]} ]]; then
+		echo -e "${CYAN}${active_algo} ${GREEN}is already set. Nothing to do${WHITE}"
 	fi
 else
 	echo "Error occured while getting max profit"
