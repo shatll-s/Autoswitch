@@ -117,11 +117,10 @@ algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
 
 echo "$(date -R) Autoswitch for NiceHash started"
-echo -e "State provider: ${CYAN}$provider${WHITE}"
 bitaps_api=`curl -s https://api.bitaps.com/market/v1/ticker/btcusd`
 btcusd=`echo $bitaps_api | jq '.data.last'`
 [[ -z $btcusd ]] && echo "BitAPS API is not available, using default BTC price " && btcusd=12000
-echo "BTC/USD $btcusd"
+echo -e "State provider: ${CYAN}$provider${WHITE}, BTC/USD $btcusd"
 
 #echo $nh_stats > /tmp/nh_stats
 
@@ -148,6 +147,11 @@ if [[ ! -z $max_profit_i ]]; then
 		
 	elif [[ $active_algo == ${algo[$max_profit_i]} ]]; then
 		echo -e "${CYAN}${active_algo} ${GREEN}is already set. Nothing to do${WHITE}"
+	else	
+		for (( i=0; i < ${#algo[@]}; i++ )); do
+			[[ ${algo[$i]} == $active_algo ]] && active_profit=$profit_btc[$i] && break
+		done
+		echo "active profit = $active_profit"
 	fi
 else
 	echo "Error occured while getting max profit"
