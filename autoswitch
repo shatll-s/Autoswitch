@@ -2,6 +2,7 @@
 	"autoswitch": [
 		{
 			"algo": "DAGGERHASHIMOTO",
+			"active": 1,
 			"miner": "claymore",
 			"batch": "cd /sobaka/miners/claymore/14.7/; export GPU_MAX_HEAP_SIZE=100; export GPU_MAX_ALLOC_PERCENT=100; export GPU_USE_SYNC_OBJECTS=1; /sobaka/miners/claymore/14.7/miner -epool daggerhashimoto.eu-new.nicehash.com:3353 -ewal 3BAeuZjNMmobioMMpMyXNVHMmZQ5q1voDb.Worker4 -epsw x -r 1 -mport -3333 -logfile /sobaka/log/claymore_noappend.log -allpools 1 -esm 3"
 		},

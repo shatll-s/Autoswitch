@@ -130,20 +130,20 @@ case $provider in
 	;;
 esac
 $LINE
+echo "@"$max_profit_i"@"
 if [[ ! -z max_profit_i ]]; then
 	string="${CYAN}${algo[$max_profit_i]}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
 	echo -e "$string"
 	$LINE
 	. $BATCH_CFG
 	as_cfg=`cat $AUTOSWITCH_CFG`
-	#echo $as_cfg | jq '.'
-	$LINE
-	selected=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
-	echo "Selected"
-	echo $selected | jq '.'
+	active=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
+	echo $active | jq '.algo'
+	
 	if [[ -z $selected ]]; then
-		echo -e "${GREEN}There is no selected algo, so set ${algo[$max_profit_i]}"
-	else
-		:
+		echo -e "${GREEN}There is no active algo, set ${CYAN}${algo[$max_profit_i]}${WHITE}"	
+		
+	elif 
+		
 	fi
 fi
