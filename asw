@@ -109,7 +109,9 @@ function get_old_nicehash_stats () {
 
 algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
-divider=(`echo $algo_dividers | jq ".${algo[$i]}"`)
+for (( i=0; i < ${#algo[@]}; i++ )); do
+	divider[i]=`echo $algo_dividers | jq ".${algo[$i]}"`
+done
 
 echo "$(date -R) Autoswitch for NiceHash started"
 echo -e "State provider: ${CYAN}$provider${WHITE}"
