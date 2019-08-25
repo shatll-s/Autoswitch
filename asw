@@ -90,7 +90,7 @@ function get_old_nicehash_stats () {
 	nh_stats=$(echo `curl -s $api` | jq '.result.simplemultialgo[]')
 	for (( i=0; i < ${#algo[@]}; i++ )); do
 		key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-		if [[ ! -z $key[$i] ]]; then
+		if [[ ! -z $key[$i] && $key[$i] != null ]]; then
 			price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 			#algo[$i]=${benchmark_algos[$i]}
 			#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
