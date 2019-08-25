@@ -143,7 +143,7 @@ if [[ ! -z max_profit_i ]]; then
 	if [[ -z $selected ]]; then
 		echo -e "${GREEN}There is no active algo, set ${CYAN}${algo[$max_profit_i]}${WHITE}"	
 		
-	elif 
-		
+	#elif 
+		:
 	fi
 fi
