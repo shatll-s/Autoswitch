@@ -1,4 +1,6 @@
 #!/bin/bash
+BATCH_CFG="/sobaka/cfg/batch.cfg"
+AUTOSWITCH_CFG="/sobaka/cfg/autoswitch.cfg"
 . colors
 
 provider="Nicehash NEW"
@@ -8,7 +10,7 @@ benchmark='
 {
 	"DAGGERHASHIMOTO": 162,
 	"X16R": 115,
-	"BEAMV2": 155
+	"BEAMV2": 222
 }'
 
 #DAGGERHASHIMOTO	BTC/TH/day
@@ -130,4 +132,8 @@ if [[ ! -z max_profit_i ]]; then
 	string="${CYAN}${algo[$max_profit_i]}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
 	echo -e "$string"
 	$LINE
+	. $BATCH_CFG
+	as_cfg=`cat $AUTOSWITCH_CFG`
+	echo $as_cfg | jq '.'
+	
 fi
