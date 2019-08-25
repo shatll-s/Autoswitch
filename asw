@@ -1,7 +1,7 @@
 #!/bin/bash
 . colors
 
-provider="nicehash_new"
+provider="nicehash_old"
 
 #benchmark позже заливать из файла
 benchmark='
@@ -15,6 +15,7 @@ benchmark='
 #X16R				BTC/GH/day
 #BEAMV2				BTC/kSol/day
 #GrinCuckaroo29		BTC/kG/day
+
 algo_dividers='
 {
 	"DAGGERHASHIMOTO": 1000,
@@ -29,7 +30,6 @@ function get_new_nicehash_stats () {
 		#algo[$i]=${benchmark_algos[$i]}
 		#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
 		divider[$i]=`echo $algo_dividers | jq ".${algo[$i]}"`
-		echo "Divider: "${divider[$i]}
 		price[$i]=`echo $nh_stats | jq -r ". | select (.algorithm == \"${algo[$i]}\") | .paying"`
 		profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
 		profit_usd[$i]=`echo "scale=2; x=${profit_btc[$i]} * $btcusd; if(x<1) print 0; x" | bc -l`
@@ -38,55 +38,70 @@ function get_new_nicehash_stats () {
 	done	
 }
 
-#api="https://api.nicehash.com/api?method=simplemultialgo.info"
+function get_old_nicehash_stats () {
+	api="https://api.nicehash.com/api?method=simplemultialgo.info"
+	nh_algos='
+	{
+		"Scrypt" : 0,
+		"SHA256" : 1,
+		"ScryptNf" : 2,
+		"X11" : 3,
+		"X13" : 4,
+		"Keccak" : 5,
+		"X15" : 6,
+		"Nist5" : 7,
+		"NeoScrypt" : 8,
+		"Lyra2RE" : 9,
+		"WhirlpoolX" : 10,
+		"Qubit" : 11,
+		"Quark" : 12,
+		"Axiom" : 13,
+		"Lyra2REv2" : 14,
+		"ScryptJaneNf16" : 15,
+		"Blake256r8" : 16,
+		"Blake256r14" : 17,
+		"Blake256r8vnl" : 18,
+		"Hodl" : 19,
+		"DaggerHashimoto" : 20,
+		"Decred" : 21,
+		"CryptoNight" : 22,
+		"Lbry" : 23,
+		"Equihash" : 24,
+		"Pascal" : 25,
+		"X11Gost" : 26,
+		"Sia" : 27,
+		"Blake2s" : 28,
+		"Skunk" : 29,
+		"CryptoNightV7" : 30,
+		"CryptoNightHeavy" : 31,
+		"Lyra2Z" : 32,
+		"X16R" : 33,
+		"CryptoNightV8" : 34,
+		"SHA256AsicBoost" : 35,
+		"Zhash" : 36,
+		"Beam" : 37,
+		"GrinCuckaroo29" : 38,
+		"GrinCuckatoo31" : 39,
+		"Lyra2REv3" : 40,
+		"MTP" : 41,
+		"CryptoNightR" : 42,
+		"CuckooCycle" : 43
+	}'
+	for (( i=0; i < ${#benchmark_algos[@]}; i++ )); do
+		key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
+		price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
+		#algo[$i]=${benchmark_algos[$i]}
+		#key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
+		price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${algo[$i]}) | .paying"`
+		profit_btc[$i]=`echo "scale=2; x=${price[$i]} * ${hr[$i]}; if(x<1) print 0; x" | bc -l`
+		profit_usd[$i]=`echo "scale=2; ${profit_btc[$i]} * $btcusd" | bc -l`
+		string="${CYAN}${algo[$i]}${WHITE} (${key[$i]}), price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
+		echo -e "$string"
+	done 
+}
 
-nh_algos='
-{
-	"Scrypt" : 0,
-	"SHA256" : 1,
-	"ScryptNf" : 2,
-	"X11" : 3,
-	"X13" : 4,
-	"Keccak" : 5,
-	"X15" : 6,
-	"Nist5" : 7,
-	"NeoScrypt" : 8,
-	"Lyra2RE" : 9,
-	"WhirlpoolX" : 10,
-	"Qubit" : 11,
-	"Quark" : 12,
-	"Axiom" : 13,
-	"Lyra2REv2" : 14,
-	"ScryptJaneNf16" : 15,
-	"Blake256r8" : 16,
-	"Blake256r14" : 17,
-	"Blake256r8vnl" : 18,
-	"Hodl" : 19,
-	"DaggerHashimoto" : 20,
-	"Decred" : 21,
-	"CryptoNight" : 22,
-	"Lbry" : 23,
-	"Equihash" : 24,
-	"Pascal" : 25,
-	"X11Gost" : 26,
-	"Sia" : 27,
-	"Blake2s" : 28,
-	"Skunk" : 29,
-	"CryptoNightV7" : 30,
-	"CryptoNightHeavy" : 31,
-	"Lyra2Z" : 32,
-	"X16R" : 33,
-	"CryptoNightV8" : 34,
-	"SHA256AsicBoost" : 35,
-	"Zhash" : 36,
-	"Beam" : 37,
-	"GrinCuckaroo29" : 38,
-	"GrinCuckatoo31" : 39,
-	"Lyra2REv3" : 40,
-	"MTP" : 41,
-	"CryptoNightR" : 42,
-	"CuckooCycle" : 43
-}'
+
+
 
 algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
@@ -102,8 +117,7 @@ echo "BTC/USD $btcusd"
 
 case $provider in
 	nicehash_old)
-		screen -d wd
-		screen -r wd
+		get_old_nicehash_stats
 	;;
 	nicehash_new|*)
 		get_new_nicehash_stats
