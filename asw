@@ -94,12 +94,16 @@ function get_old_nicehash_stats () {
 			price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 			echo "A ${divider[$i]}"
 			profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
+			echo "B"
 			echo `echo "if (profit_btc[$i] > $max_profit) print 1" | bc -l`
+			echo "C"
 			if [[ -z $max_profit || `echo "if (profit_btc[$i] > $max_profit) print 1" | bc -l` -eq 1 ]]; then
 				max_profit=${profit_btc[$i]}
 				max_profit_i=$i
 			fi
+			echo "D"
 			profit_usd[$i]=`echo "scale=2; ${profit_btc[$i]} * $btcusd" | bc -l`
+			echo "E"
 			string="${CYAN}${algo[$i]}${WHITE} (${key[$i]}), price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
 		else
 			string="${CYAN}${algo[$i]}${WHITE} is not supported by current state provider"
