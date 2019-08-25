@@ -151,7 +151,10 @@ if [[ ! -z $max_profit_i ]]; then
 		for (( i=0; i < ${#algo[@]}; i++ )); do
 			[[ ${algo[$i]} == $active_algo ]] && active_profit=${profit_btc[$i]} && break
 		done
+		
 		echo "active profit = $active_profit"
+		delta=`echo "scale=2;($max_profit/$active_profit - 1)/100" | bc -l`
+		echo "delta - $delta%"
 	fi
 else
 	echo "Error occured while getting max profit"
