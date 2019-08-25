@@ -27,6 +27,7 @@ function get_new_nicehash_stats () {
 	local api="https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
 	nh_stats=$(echo `curl -s $api` | jq '.miningAlgorithms[]')
 	for (( i=0; i < ${#algo[@]}; i++ )); do
+		divider[i]=`echo $algo_dividers | jq ".${algo[$i]}"`
 		price[$i]=`echo $nh_stats | jq -r ". | select (.algorithm == \"${algo[$i]}\") | .paying"`
 		profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
 		profit_usd[$i]=`echo "scale=2; x=${profit_btc[$i]} * $btcusd; if(x<1) print 0; x" | bc -l`
@@ -89,6 +90,7 @@ function get_old_nicehash_stats () {
 	for (( i=0; i < ${#algo[@]}; i++ )); do
 		if [[ `echo $nh_algos | jq ".${algo[$i]}"` != null ]]; then
 			key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
+			divider[i]=`echo $algo_dividers | jq ".${algo[$i]}"`
 			price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 			echo "A ${divider[$i]}"
 			profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
@@ -109,9 +111,6 @@ function get_old_nicehash_stats () {
 
 algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
 hr=(`echo $benchmark | jq -r '.[]'`)
-for (( i=0; i < ${#algo[@]}; i++ )); do
-	divider[i]=`echo $algo_dividers | jq ".${algo[$i]}"`
-done
 
 echo "$(date -R) Autoswitch for NiceHash started"
 echo -e "State provider: ${CYAN}$provider${WHITE}"
