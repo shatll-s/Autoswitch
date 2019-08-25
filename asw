@@ -1,7 +1,7 @@
 #!/bin/bash
 . colors
 
-provider="Nicehash OLD"
+provider="Nicehash NEW"
 
 #benchmark позже заливать из файла
 benchmark='
@@ -33,7 +33,6 @@ function get_new_nicehash_stats () {
 		profit_usd[$i]=`echo "scale=2; x=${profit_btc[$i]} * $btcusd; if(x<1) print 0; x" | bc -l`
 		string="${CYAN}${algo[$i]}${WHITE}, price ${price[i]}, hr ${hr[$i]}, ${profit_btc[$i]} BTC/day, ${GREEN}${profit_usd[$i]} USD/day${WHITE}"
 		echo -e "$string"
-		echo "=="
 	done	
 }
 
@@ -103,7 +102,6 @@ function get_old_nicehash_stats () {
 			string="${CYAN}${algo[$i]}${WHITE} is not supported by current state provider"
 		fi
 		echo -e "$string"
-		echo "=="
 	done 
 }
 
