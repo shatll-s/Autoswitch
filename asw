@@ -5,6 +5,7 @@ AUTOSWITCH_CFG="/Autoswitch/autoswitch"
 . colors
 
 provider="Nicehash NEW"
+hyst="5"
 
 #benchmark позже заливать из файла
 benchmark='
@@ -140,4 +141,9 @@ if [[ ! -z max_profit_i ]]; then
 	selected=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
 	echo "Selected"
 	echo $selected | jq '.'
+	if [[ -z $selected ]]; then
+		echo -e "${GREEN}There is no selected algo, so set ${algo[$max_profit_i]}"
+	else
+		:
+	fi
 fi
