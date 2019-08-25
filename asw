@@ -5,7 +5,7 @@ AUTOSWITCH_CFG="/Autoswitch/autoswitch"
 . colors
 
 provider="Nicehash NEW"
-hyst="5"
+hyst="55"
 
 #benchmark позже заливать из файла
 benchmark='
@@ -152,9 +152,9 @@ if [[ ! -z $max_profit_i ]]; then
 			[[ ${algo[$i]} == $active_algo ]] && active_profit=${profit_btc[$i]} && break
 		done
 		
-		echo "active profit = $active_profit"
+		#echo "active profit = $active_profit"
 		delta=`echo "scale=2;($max_profit/$active_profit - 1)*100" | bc -l`
-		echo "delta - $delta%"
+		#echo "delta - $delta%"
 		echo -en "${CYAN}${algo[$max_profit_i]}${GREEN} is $delta% more profitable then ${CYAN}$active_algo${GREEN}. "
 		if [[ `echo "if ($delta > $hyst) print 1" | bc -l` -eq 1 ]]; then
 			echo -e "Switching to it${WHITE}"
