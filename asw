@@ -149,7 +149,7 @@ if [[ ! -z $max_profit_i ]]; then
 	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
 			echo $i
 			echo $as_cfg | jq ".autoswitch[$i]"
-			if [[ $as_cfg | jq ".autoswitch[$i].algo" == $best_algo ]]; then
+			if [[ `echo $as_cfg | jq ".autoswitch[$i].algo"` == $best_algo ]]; then
 				echo "Found! $i"
 			break
 			fi
