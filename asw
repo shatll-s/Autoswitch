@@ -30,7 +30,7 @@ algo_dividers='
 function modify_json () {
 	echo "$1"
 	local json=`echo $1 | jq 'del (.autoswitch[].active)'`
-	echo "$1"
+	echo "$json"
 #	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
 		#echo $as_cfg | jq ".autoswitch[$i]"
 #		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
