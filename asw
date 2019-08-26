@@ -147,15 +147,17 @@ if [[ ! -z $max_profit_i ]]; then
 	#length=`echo $as_cfg | jq '.autoswitch | length'`
 	#echo $length
 	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
-			echo $i
+			echo $i`echo $as_cfg | jq ".autoswitch[$i].algo"`
+			#cho 
 			echo $as_cfg | jq ".autoswitch[$i]"
-			if [[ `echo $as_cfg | jq ".autoswitch[$i].algo"` == $best_algo ]]; then
+			if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
 				echo "Found! $i"
 			break
 			fi
 		done
-	active=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
-	active_algo=`echo $active | jq -r '.algo'`
+	#active=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
+	active_algo=`echo $as_cfg | jq -r ".autoswitch[] | select (.active == 1) | .algo"`
+	#active_algo=`echo $active | jq -r '.algo'`
 	
 	if [[ -z $active_algo ]]; then
 		echo -e "${GREEN}There is no active algo, set ${CYAN}${algo[$max_profit_i]}${WHITE}"	
