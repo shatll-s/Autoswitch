@@ -36,7 +36,9 @@ function modify_json () {
 		#echo $as_cfg | jq ".autoswitch[$i]"
 		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
 			#echo $json | jq ". += .autoswitch[$i] + {\"active\": 1}"
-			json=`jq ".autoswitch[$i] += {\"active\": 1}"` <<< "$json"
+			json=`jq ".autoswitch[$i] += {\"active\": 1}" <<< "$json"`
+		 #request=`jq ".stats += {\"cpu_temp_avg\": \"$avg_cpu_temp\"}" <<< "$request"`
+
 			#echo "Found! $i"
 			echo "$json"
 		break
