@@ -1,8 +1,10 @@
 #!/bin/bash
 #BATCH_CFG="/sobaka/cfg/batch.cfg"
 #AUTOSWITCH_CFG="/sobaka/cfg/autoswitch.cfg"
-BATCH_CFG="/Autoswitch/batch.cfg"
-AUTOSWITCH_CFG="/Autoswitch/autoswitch"
+BATCH_CFG="/tmp/batch.cfg"
+AUTOSWITCH_CFG="/tmp/autoswitch.cfg"
+cp /Autoswitch/autoswitch $AUTOSWITCH_CFG
+cp /Autoswitch/batch.cfg $BATCH_CFG
 
 . colors
 
