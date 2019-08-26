@@ -29,7 +29,7 @@ algo_dividers='
 	"BEAMV2": 1000000000
 }'
 
-function modify_json () {
+function set_active () {
 	local json=`echo $1 | jq 'del (.autoswitch[].active)'`
 	local best_algo="$2"
 	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
@@ -39,7 +39,7 @@ function modify_json () {
 			sed "s#miner1=.*#$miner1=\"$miner\"#" $BATCH_CFG
 			sed "s#batch1=.*#$batch1=\"$batch\"#" $BATCH_CFG
 			json=`jq ".autoswitch[$i] += {\"active\": 1}" <<< "$json"`
-			echo "$json"
+			echo "$json" > $AUTOSWITCH_CFG
 		break
 		fi
 	done	
@@ -163,8 +163,7 @@ if [[ ! -z $max_profit_i ]]; then
 	
 	if [[ -z $active_algo ]]; then
 		echo -e "${GREEN}There is no active algo, set ${CYAN}${algo[$max_profit_i]}${WHITE}"	
-		echo `modify_json "$as_cfg" "$best_algo"` > $AUTOSWITCH_CFG
-		#change batch in BATCH_CFG
+		set_active "$as_cfg" "$best_algo"
 		
 	elif [[ $active_algo == ${algo[$max_profit_i]} ]]; then
 		echo -e "${CYAN}${active_algo} ${GREEN}is already set. Nothing to do${WHITE}"
@@ -177,8 +176,7 @@ if [[ ! -z $max_profit_i ]]; then
 		echo -en "${CYAN}${algo[$max_profit_i]}${GREEN} is $delta% more profitable then ${CYAN}$active_algo${GREEN}"
 		if [[ `echo "if ($delta > $hyst) print 1" | bc -l` -eq 1 ]]; then
 			echo -e ", switching to it${WHITE}"
-			echo `modify_json "$as_cfg" "$best_algo"` > $AUTOSWITCH_CFG
-			#change batch in BATCH_CFG
+			set_active "$as_cfg" "$best_algo"
 		else
 			echo -e ", but hysteresis is $hyst, nothing to do${WHITE}"
 		fi
