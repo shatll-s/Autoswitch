@@ -180,7 +180,7 @@ if [[ ! -z $max_profit_i ]]; then
 		echo -en "${CYAN}${algo[$max_profit_i]}${GREEN} is $delta% more profitable then ${CYAN}$active_algo${GREEN}"
 		if [[ `echo "if ($delta > $hyst) print 1" | bc -l` -eq 1 ]]; then
 			echo -e ", switching to it${WHITE}"
-			modify_json $as_cfg
+			modify_json "$as_cfg"
 		else
 			echo -e ", but hysteresis is $hyst, nothing to do${WHITE}"
 		fi
