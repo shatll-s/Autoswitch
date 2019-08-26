@@ -38,8 +38,8 @@ function set_active () {
 		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
 			local miner=`echo $as_cfg | jq -r ".autoswitch[$i].miner"`
 			local batch=`echo $as_cfg | jq -r ".autoswitch[$i].batch"`
-			sed -i "s%miner1=.*$%miner1=\"$miner\"%" $BATCH_CFG
-			sed -i "s%batch1=.*$%batch1=\"$batch\"%" $BATCH_CFG
+			sed -e -i "s%miner1=.*$%miner1=\"$miner\"%; s%batch1=.*$%batch1=\"$batch\"%" $BATCH_CFG
+			#sed -i "s%batch1=.*$%batch1=\"$batch\"%" $BATCH_CFG
 			json=`jq ".autoswitch[$i] += {\"active\": 1}" <<< "$json"`
 			echo "$json" > $AUTOSWITCH_CFG
 		break
