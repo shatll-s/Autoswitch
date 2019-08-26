@@ -139,11 +139,14 @@ if [[ ! -z $max_profit_i ]]; then
 	$LINE
 	. $BATCH_CFG
 	as_cfg=`cat $AUTOSWITCH_CFG`
+	length=`echo $as_cfg | jq '.[] | length'`
+	echo $length
 	active=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
 	active_algo=`echo $active | jq -r '.algo'`
 	
 	if [[ -z $active_algo ]]; then
 		echo -e "${GREEN}There is no active algo, set ${CYAN}${algo[$max_profit_i]}${WHITE}"	
+		as_cfg=`echo $as_cfg | jq 'del (.autoswitch[].active)'`
 		
 	elif [[ $active_algo == ${algo[$max_profit_i]} ]]; then
 		echo -e "${CYAN}${active_algo} ${GREEN}is already set. Nothing to do${WHITE}"
