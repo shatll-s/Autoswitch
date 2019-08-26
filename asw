@@ -134,7 +134,10 @@ case $provider in
 esac
 echo "--"
 if [[ ! -z $max_profit_i ]]; then
-	string="${CYAN}${algo[$max_profit_i]}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
+	best_algo=${algo[$max_profit_i]}
+	#best_profit_btc=${algo[$max_profit_i]}
+	#best_algo=${algo[$max_profit_i]}
+	string="${CYAN}${best_algo}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
 	echo -e "$string"
 	$LINE
 	. $BATCH_CFG
@@ -146,7 +149,10 @@ if [[ ! -z $max_profit_i ]]; then
 	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
 			echo $i
 			echo $as_cfg | jq ".autoswitch[$i]"
-			[[ ${algo[$i]} == $active_algo ]] && active_profit=${profit_btc[$i]} && break
+			if [[ $as_cfg | jq ".autoswitch[$i].algo" == $best_algo ]]; then
+				echo "Found! $i"
+			break
+			fi
 		done
 	active=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
 	active_algo=`echo $active | jq -r '.algo'`
