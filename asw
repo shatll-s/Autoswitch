@@ -36,8 +36,8 @@ function modify_json () {
 		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
 			local miner=`echo $as_cfg | jq -r ".autoswitch[$i].miner"`
 			local batch=`echo $as_cfg | jq -r ".autoswitch[$i].batch"`
-			sed "s/miner1=.*$/miner1=\"$miner\"/" $BATCH_CFG
-			sed "s/batch1=.*$/batch1=\"$batch\"/" $BATCH_CFG
+			sed "s#miner1=.*#$miner1=\"$miner\"#" $BATCH_CFG
+			sed "s#batch1=.*#$batch1=\"$batch\"#" $BATCH_CFG
 			json=`jq ".autoswitch[$i] += {\"active\": 1}" <<< "$json"`
 			echo "$json"
 		break
