@@ -1,7 +1,9 @@
 #!/bin/bash
-BATCH_CFG="/sobaka/cfg/batch.cfg"
+#BATCH_CFG="/sobaka/cfg/batch.cfg"
 #AUTOSWITCH_CFG="/sobaka/cfg/autoswitch.cfg"
+BATCH_CFG="/Autoswitch/batch.cfg"
 AUTOSWITCH_CFG="/Autoswitch/autoswitch"
+
 . colors
 
 provider="Nicehash NEW"
@@ -32,6 +34,10 @@ function modify_json () {
 	local best_algo="$2"
 	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
 		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
+			local miner=`echo $as_cfg | jq -r ".autoswitch[$i].miner"`
+			local batch=`echo $as_cfg | jq -r ".autoswitch[$i].batch"`
+			sed "s/miner1=.*$/miner1=\"$miner\"/" $BATCH_CFG
+			sed "s/batch1=.*$/batch1=\"$batch\"/" $BATCH_CFG
 			json=`jq ".autoswitch[$i] += {\"active\": 1}" <<< "$json"`
 			echo "$json"
 		break
