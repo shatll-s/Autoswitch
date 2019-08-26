@@ -27,6 +27,18 @@ algo_dividers='
 	"BEAMV2": 1000000000
 }'
 
+function modify_json () {
+	echo "$1"
+#	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
+		#echo $as_cfg | jq ".autoswitch[$i]"
+#		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
+#			echo "Found! $i"
+#		break
+#		fi
+#	done	
+	
+}
+
 function get_new_nicehash_stats () {
 	local api="https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info/"
 	nh_stats=$(echo `curl -s $api` | jq '.miningAlgorithms[]')
@@ -146,15 +158,7 @@ if [[ ! -z $max_profit_i ]]; then
 	echo $as_cfg | jq '.autoswitch'
 	#length=`echo $as_cfg | jq '.autoswitch | length'`
 	#echo $length
-	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
-			echo $i`echo $as_cfg | jq ".autoswitch[$i].algo"`
-			#cho 
-			echo $as_cfg | jq ".autoswitch[$i]"
-			if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
-				echo "Found! $i"
-			break
-			fi
-		done
+
 	#active=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
 	active_algo=`echo $as_cfg | jq -r ".autoswitch[] | select (.active == 1) | .algo"`
 	#active_algo=`echo $active | jq -r '.algo'`
@@ -176,6 +180,7 @@ if [[ ! -z $max_profit_i ]]; then
 		echo -en "${CYAN}${algo[$max_profit_i]}${GREEN} is $delta% more profitable then ${CYAN}$active_algo${GREEN}"
 		if [[ `echo "if ($delta > $hyst) print 1" | bc -l` -eq 1 ]]; then
 			echo -e ", switching to it${WHITE}"
+			modify_json $as_cfg
 		else
 			echo -e ", but hysteresis is $hyst, nothing to do${WHITE}"
 		fi
