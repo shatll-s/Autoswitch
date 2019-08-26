@@ -30,14 +30,16 @@ algo_dividers='
 function modify_json () {
 	echo "$1"
 	local json=`echo $1 | jq 'del (.autoswitch[].active)'`
-	echo "$json"
-#	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
+	local best_algo="$2"
+	#echo "$json"
+	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
 		#echo $as_cfg | jq ".autoswitch[$i]"
-#		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
-#			echo "Found! $i"
-#		break
-#		fi
-#	done	
+		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
+			echo $json | jq ". |= .autoswitch[1] + {\"active\": 1}"
+			#echo "Found! $i"
+		break
+		fi
+	done	
 	
 }
 
@@ -182,7 +184,7 @@ if [[ ! -z $max_profit_i ]]; then
 		echo -en "${CYAN}${algo[$max_profit_i]}${GREEN} is $delta% more profitable then ${CYAN}$active_algo${GREEN}"
 		if [[ `echo "if ($delta > $hyst) print 1" | bc -l` -eq 1 ]]; then
 			echo -e ", switching to it${WHITE}"
-			modify_json "$as_cfg"
+			modify_json "$as_cfg" "$best_algo"
 		else
 			echo -e ", but hysteresis is $hyst, nothing to do${WHITE}"
 		fi
