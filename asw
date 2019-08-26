@@ -40,8 +40,8 @@ function set_active () {
 			local batch=`echo $as_cfg | jq -r ".autoswitch[$i].batch"`
 			#sed -n -e "s%miner1=.*%miner1=\"$miner\"%; s%batch1=.*$%batch1=\"$batch\"%" $BATCH_CFG
 			echo "Miner $miner; batch $batch"
-			sed -n "s%batch1=.*$%batch1=\"$batch\"%" $BATCH_CFG
-			sed -n "s%miner1=.*$%miner1=\"$miner\"%" $BATCH_CFG
+			sed -i "s%batch1=.*$%batch1=\"$batch\"%" $BATCH_CFG
+			sed -i "s%miner1=.*$%miner1=\"$miner\"%" $BATCH_CFG
 			#sed -i "s%batch1=.*$%batch1=\"$batch\"%" $BATCH_CFG
 			json=`jq ".autoswitch[$i] += {\"active\": 1}" <<< "$json"`
 			echo "$json" > $AUTOSWITCH_CFG
