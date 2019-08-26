@@ -140,10 +140,12 @@ if [[ ! -z $max_profit_i ]]; then
 	. $BATCH_CFG
 	
 	as_cfg=`cat $AUTOSWITCH_CFG`
-	echo $as_cfg | jq '.'
-	length=`echo $as_cfg | jq '.autoswitch | length'`
-	echo $length
-	for (( i=0; i < ${#algo[@]}; i++ )); do
+	echo $as_cfg | jq '.autoswitch'
+	#length=`echo $as_cfg | jq '.autoswitch | length'`
+	#echo $length
+	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
+			echo $i
+			echo $as_cfg | jq ".autoswitch[$i]"
 			[[ ${algo[$i]} == $active_algo ]] && active_profit=${profit_btc[$i]} && break
 		done
 	active=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
