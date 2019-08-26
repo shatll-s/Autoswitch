@@ -14,7 +14,7 @@ hyst="5"
 #benchmark позже заливать из файла
 benchmark='
 {
-	"DAGGERHASHIMOTO": 162,
+	"DAGGERHASHIMOTO": 362,
 	"X16R": 115,
 	"BEAMV2": 222
 }'
