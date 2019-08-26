@@ -5,7 +5,7 @@ AUTOSWITCH_CFG="/Autoswitch/autoswitch"
 . colors
 
 provider="Nicehash NEW"
-hyst="55"
+hyst="5"
 
 #benchmark позже заливать из файла
 benchmark='
