@@ -28,23 +28,15 @@ algo_dividers='
 }'
 
 function modify_json () {
-	echo "$1"
 	local json=`echo $1 | jq 'del (.autoswitch[].active)'`
 	local best_algo="$2"
-	#echo "$json"
 	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
-		#echo $as_cfg | jq ".autoswitch[$i]"
 		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
-			#echo $json | jq ". += .autoswitch[$i] + {\"active\": 1}"
 			json=`jq ".autoswitch[$i] += {\"active\": 1}" <<< "$json"`
-		 #request=`jq ".stats += {\"cpu_temp_avg\": \"$avg_cpu_temp\"}" <<< "$request"`
-
-			#echo "Found! $i"
 			echo "$json"
 		break
 		fi
 	done	
-	
 }
 
 function get_new_nicehash_stats () {
@@ -155,25 +147,18 @@ esac
 echo "--"
 if [[ ! -z $max_profit_i ]]; then
 	best_algo=${algo[$max_profit_i]}
-	#best_profit_btc=${algo[$max_profit_i]}
-	#best_algo=${algo[$max_profit_i]}
 	string="${CYAN}${best_algo}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
 	echo -e "$string"
 	$LINE
-	. $BATCH_CFG
+	#. $BATCH_CFG
 	
 	as_cfg=`cat $AUTOSWITCH_CFG`
-	echo $as_cfg | jq '.autoswitch'
-	#length=`echo $as_cfg | jq '.autoswitch | length'`
-	#echo $length
-
-	#active=`echo $as_cfg | jq ".autoswitch[] | select (.active == 1)"`
 	active_algo=`echo $as_cfg | jq -r ".autoswitch[] | select (.active == 1) | .algo"`
-	#active_algo=`echo $active | jq -r '.algo'`
 	
 	if [[ -z $active_algo ]]; then
 		echo -e "${GREEN}There is no active algo, set ${CYAN}${algo[$max_profit_i]}${WHITE}"	
-		as_cfg=`echo $as_cfg | jq 'del (.autoswitch[].active)'`
+		echo `modify_json "$as_cfg" "$best_algo"` > $AUTOSWITCH_CFG
+		#change batch in BATCH_CFG
 		
 	elif [[ $active_algo == ${algo[$max_profit_i]} ]]; then
 		echo -e "${CYAN}${active_algo} ${GREEN}is already set. Nothing to do${WHITE}"
@@ -182,13 +167,12 @@ if [[ ! -z $max_profit_i ]]; then
 			[[ ${algo[$i]} == $active_algo ]] && active_profit=${profit_btc[$i]} && break
 		done
 		
-		#echo "active profit = $active_profit"
 		delta=`echo "scale=2;($max_profit/$active_profit - 1)*100" | bc -l`
-		#echo "delta - $delta%"
 		echo -en "${CYAN}${algo[$max_profit_i]}${GREEN} is $delta% more profitable then ${CYAN}$active_algo${GREEN}"
 		if [[ `echo "if ($delta > $hyst) print 1" | bc -l` -eq 1 ]]; then
 			echo -e ", switching to it${WHITE}"
-			modify_json "$as_cfg" "$best_algo"
+			echo `modify_json "$as_cfg" "$best_algo"` > $AUTOSWITCH_CFG
+			#change batch in BATCH_CFG
 		else
 			echo -e ", but hysteresis is $hyst, nothing to do${WHITE}"
 		fi
