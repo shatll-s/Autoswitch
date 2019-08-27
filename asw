@@ -1,12 +1,15 @@
 #!/bin/bash
 #BATCH_CFG="/sobaka/cfg/batch.cfg"
-#AUTOSWITCH_CFG="/sobaka/cfg/autoswitch.cfg"
 BATCH_CFG="/tmp/batch.cfg"
-AUTOSWITCH_CFG="/tmp/autoswitch.cfg"
-cp /Autoswitch/autoswitch $AUTOSWITCH_CFG
+AUTOSWITCH_CFG="/sobaka/cfg/autoswitch.cfg"
+AUTOSWITCH_TMP="/tmp/autoswitch"
+cp /Autoswitch/autoswitch $AUTOSWITCH_TMP #remove later
 cp /Autoswitch/batch.cfg $BATCH_CFG
 
 . colors
+. $AUTOSWITCH_CFG
+
+
 
 provider="Nicehash NEW"
 hyst="5"
@@ -34,20 +37,15 @@ algo_dividers='
 function set_active () {
 	local json=`echo $1 | jq 'del (.autoswitch[].active)'`
 	local best_algo="$2"
-	for (( i=0; i < `echo $as_cfg | jq '.autoswitch | length'`; i++ )); do
-		if [[ `echo $as_cfg | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
-			local miner=`echo $as_cfg | jq -r ".autoswitch[$i].miner"`
-			local batch=`echo $as_cfg | jq -r ".autoswitch[$i].batch"`
-			#sed -n -e "s%miner1=.*%miner1=\"$miner\"%; s%batch1=.*$%batch1=\"$batch\"%" $BATCH_CFG
-			#echo "Miner $miner; batch $batch"
-			#strange bug with sed, soo
+	for (( i=0; i < `echo $json | jq '.autoswitch | length'`; i++ )); do
+		if [[ `echo $json | jq -r ".autoswitch[$i].algo"` == $best_algo ]]; then
+			local miner=`echo $json | jq -r ".autoswitch[$i].miner"`
+			local batch=`echo $json | jq -r ".autoswitch[$i].batch"`
+			#strange bug - if use sed directly on file, I can`t cat this file later, so use ebanie kostyli
 			local batch_cfg=`cat $BATCH_CFG | sed -e "s%batch1=.*%batch1=\"$batch\"%; s%miner1=.*%miner1=\"$miner\"%" `
 			echo -e "$batch_cfg" > $BATCH_CFG
-			#sed -i "s%batch1=.*%batch1=\"$batch\"%" $BATCH_CFG
-			#sed -i "s%miner1=.*%miner1=\"$miner\"%" $BATCH_CFG
-			#sed -i "s%batch1=.*$%batch1=\"$batch\"%" $BATCH_CFG
 			json=`jq ".autoswitch[$i] += {\"active\": 1}" <<< "$json"`
-			echo "$json" > $AUTOSWITCH_CFG
+			echo "$json" > $AUTOSWITCH_TMP
 		break
 		fi
 	done	
@@ -166,12 +164,12 @@ if [[ ! -z $max_profit_i ]]; then
 	$LINE
 	#. $BATCH_CFG
 	
-	as_cfg=`cat $AUTOSWITCH_CFG`
-	active_algo=`echo $as_cfg | jq -r ".autoswitch[] | select (.active == 1) | .algo"`
+	as_tmp=`cat $AUTOSWITCH_TMP`
+	active_algo=`echo $as_tmp | jq -r ".autoswitch[] | select (.active == 1) | .algo"`
 	
 	if [[ -z $active_algo ]]; then
 		echo -e "${GREEN}There is no active algo, set ${CYAN}${algo[$max_profit_i]}${WHITE}"	
-		set_active "$as_cfg" "$best_algo"
+		set_active "$as_tmp" "$best_algo"
 		
 	elif [[ $active_algo == ${algo[$max_profit_i]} ]]; then
 		echo -e "${CYAN}${active_algo} ${GREEN}is already set. Nothing to do${WHITE}"
@@ -184,7 +182,7 @@ if [[ ! -z $max_profit_i ]]; then
 		echo -en "${CYAN}${algo[$max_profit_i]}${GREEN} is $delta% more profitable then ${CYAN}$active_algo${GREEN}"
 		if [[ `echo "if ($delta > $hyst) print 1" | bc -l` -eq 1 ]]; then
 			echo -e ", switching to it${WHITE}"
-			set_active "$as_cfg" "$best_algo"
+			set_active "$as_tmp" "$best_algo"
 		else
 			echo -e ", but hysteresis is $hyst, nothing to do${WHITE}"
 		fi
