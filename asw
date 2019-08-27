@@ -140,7 +140,7 @@ function get_old_nicehash_stats () {
 ########## main ##########
 
 echo "$(date -R) Autoswitch for NiceHash started"
-echo -e "State provider: ${BLUE}$provider${WHITE}, hysteresis ${BLUE}$hyst${WHITE}, BTC/USD ${BLUE}${btcusd}${WHITE}"
+echo -e "State provider: ${CYAN}$provider${WHITE}, hysteresis ${CYAN}$hyst${WHITE}, BTC/USD ${CYAN}${btcusd}${WHITE}"
 $LINE
 
 case $provider in
@@ -154,9 +154,9 @@ esac
 
 if [[ ! -z $max_profit_i ]]; then
 	best_algo=${algo[$max_profit_i]}
-	string="-----\n${CYAN}${best_algo}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
-	echo -e "$string"
+	string="${CYAN}${best_algo}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
 	$LINE
+	echo -e "$string"
 	
 	as_tmp=`cat $AUTOSWITCH_TMP`
 	active_algo=`echo $as_tmp | jq -r ".autoswitch[] | select (.active == 1) | .algo"`
