@@ -60,7 +60,6 @@ function get_new_nicehash_stats () {
 	nh_stats=$(echo `curl -s $api` | jq '.miningAlgorithms[]')
 	for (( i=0; i < ${#algo[@]}; i++ )); do
 		divider[$i]=`echo $algo_dividers | jq ".${algo[$i]}"`
-		echo "@"${divider[$i]}"@"
 		[[ -z ${divider[$i]} || ${divider[i]} == null ]] && divider[i]=1
 		price[$i]=`echo $nh_stats | jq -r ". | select (.algorithm == \"${algo[$i]}\") | .paying"`
 		profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
