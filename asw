@@ -1,5 +1,7 @@
 #!/bin/bash
 #BATCH_CFG="/sobaka/cfg/batch.cfg"
+
+########## variables ##########
 BATCH_CFG="/tmp/batch.cfg"
 AUTOSWITCH_CFG="/sobaka/cfg/autoswitch.cfg"
 AUTOSWITCH_TMP="/tmp/autoswitch"
@@ -7,30 +9,8 @@ cp /Autoswitch/autoswitch $AUTOSWITCH_TMP #remove later
 cp /Autoswitch/batch.cfg $BATCH_CFG
 
 . colors
-as_cfg=`cat $AUTOSWITCH_CFG`
-echo $as_cfg | jq '.'
-[[ `echo $as_cfg | jq ".algos"` != null ]]	&& benchmark=`echo $as_cfg | jq ".algos"`
-[[ `echo $as_cfg | jq ".hyst"` != null ]]	&& hyst=`echo $as_cfg | jq -r ".hyst"`
-[[ `echo $as_cfg | jq ".provider"` != null ]]	&& provider=`echo $as_cfg | jq -r ".provider"`
-echo $benchmark | jq '.'
-echo $hyst
-echo $provider
-#provider="Nicehash NEW"
-#hyst="5"
 
-#benchmark позже заливать из файла
-#benchmark='
-#{
-#	"DAGGERHASHIMOTO": 362,
-#	"X16R": 115,
-#	"BEAMV2": 222
-#}'
-
-#DAGGERHASHIMOTO	BTC/TH/day
-#X16R				BTC/GH/day
-#BEAMV2				BTC/kSol/day
-#GrinCuckaroo29		BTC/kG/day
-
+#later need to fill more algo
 algo_dividers='
 {
 	"DAGGERHASHIMOTO": 1000,
@@ -39,6 +19,19 @@ algo_dividers='
 	"BEAMV2": 1000000000
 }'
 
+as_cfg=`cat $AUTOSWITCH_CFG`
+[[ `echo $as_cfg | jq ".algos"` != null ]]	&& benchmark=`echo $as_cfg | jq ".algos"`
+[[ `echo $as_cfg | jq ".hyst"` != null ]]	&& hyst=`echo $as_cfg | jq -r ".hyst"`
+[[ `echo $as_cfg | jq ".provider"` != null ]]	&& provider=`echo $as_cfg | jq -r ".provider"`
+
+algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
+hr=(`echo $benchmark | jq -r '.[]'`)
+
+bitaps_api=`curl -s https://api.bitaps.com/market/v1/ticker/btcusd`
+btcusd=`echo $bitaps_api | jq '.data.last'`
+[[ -z $btcusd ]] && echo "BitAPS API is not available, using default BTC price " && btcusd=12000
+
+########## functions ##########
 function set_active () {
 	local json=`echo $1 | jq 'del (.autoswitch[].active)'`
 	local best_algo="$2"
@@ -144,16 +137,10 @@ function get_old_nicehash_stats () {
 	done 
 }
 
-algo=(`echo $benchmark | jq -r 'keys_unsorted | .[]'`)
-hr=(`echo $benchmark | jq -r '.[]'`)
+########## main ##########
 
 echo "$(date -R) Autoswitch for NiceHash started"
-bitaps_api=`curl -s https://api.bitaps.com/market/v1/ticker/btcusd`
-btcusd=`echo $bitaps_api | jq '.data.last'`
-[[ -z $btcusd ]] && echo "BitAPS API is not available, using default BTC price " && btcusd=12000
-echo -e "State provider: ${CYAN}$provider${WHITE}, BTC/USD $btcusd"
-
-#echo $nh_stats > /tmp/nh_stats
+echo -e "State provider: ${CYAN}$provider${WHITE}, hysteresis ${CYAN}$hyst${WHITE}, BTC/USD ${CYAN}${btcusd}${WHITE}"
 
 case $provider in
 	"Nicehash OLD")
@@ -163,10 +150,10 @@ case $provider in
 		get_new_nicehash_stats
 	;;
 esac
-echo "--"
+
 if [[ ! -z $max_profit_i ]]; then
 	best_algo=${algo[$max_profit_i]}
-	string="${CYAN}${best_algo}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
+	string="-----\n${CYAN}${best_algo}${WHITE} is the best algo now, with ${profit_btc[$max_profit_i]} BTC/day, ${GREEN}${profit_usd[$max_profit_i]} USD/day${WHITE}"
 	echo -e "$string"
 	$LINE
 	#. $BATCH_CFG
