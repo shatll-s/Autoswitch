@@ -7,20 +7,24 @@ cp /Autoswitch/autoswitch $AUTOSWITCH_TMP #remove later
 cp /Autoswitch/batch.cfg $BATCH_CFG
 
 . colors
-. $AUTOSWITCH_CFG
-
-
-
-provider="Nicehash NEW"
-hyst="5"
+as_cfg=`cat $AUTOSWITCH_CFG`
+echo $as_cfg | jq '.'
+[[ `echo $as_cfg | jq ".algos"` != null ]]	&& benchmark=`echo $as_cfg | jq ".algos"`
+[[ `echo $as_cfg | jq ".hyst"` != null ]]	&& hyst=`echo $as_cfg | jq -r ".hyst"`
+[[ `echo $as_cfg | jq ".provider"` != null ]]	&& provider=`echo $as_cfg | jq -r ".provider"`
+echo $benchmark | jq '.'
+echo $hyst
+echo $provider
+#provider="Nicehash NEW"
+#hyst="5"
 
 #benchmark позже заливать из файла
-benchmark='
-{
-	"DAGGERHASHIMOTO": 362,
-	"X16R": 115,
-	"BEAMV2": 222
-}'
+#benchmark='
+#{
+#	"DAGGERHASHIMOTO": 362,
+#	"X16R": 115,
+#	"BEAMV2": 222
+#}'
 
 #DAGGERHASHIMOTO	BTC/TH/day
 #X16R				BTC/GH/day
