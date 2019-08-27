@@ -125,8 +125,9 @@ function get_old_nicehash_stats () {
 	nh_stats=$(echo `curl -s $api` | jq '.result.simplemultialgo[]')
 	for (( i=0; i < ${#algo[@]}; i++ )); do
 		if [[ `echo $nh_algos | jq ".${algo[$i]}"` != null ]]; then
+			divider[$i]=`echo $algo_dividers | jq ".${algo[$i]}"`
+			[[ -z ${divider[$i]} || ${divider[i]} == null ]] && divider[i]=1
 			key[$i]=`echo $nh_algos | jq ".${algo[$i]}"`
-			divider[i]=`echo $algo_dividers | jq ".${algo[$i]}"`
 			price[$i]=`echo $nh_stats | jq -r ". | select (.algo == ${key[$i]}) | .paying"`
 			profit_btc[$i]=`echo "scale=10; x=${price[$i]} * ${hr[$i]} / ${divider[$i]}; if(x<1) print 0; x" | bc -l`
 			if [[ -z $max_profit || `echo "if (${profit_btc[$i]} > $max_profit) print 1" | bc -l` -eq 1 ]]; then
